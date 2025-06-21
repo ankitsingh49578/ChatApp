@@ -1,4 +1,4 @@
-import {app, server} from "./socket/socket.js";
+import { app, server } from "./socket/socket.js";
 import express from "express";
 import connectDB from "./db/connection1.db.js";
 import cookieParser from "cookie-parser";
@@ -12,7 +12,7 @@ connectDB()
 
 app.use(
   cors({
-    origin: "https://lets-chat-pied.vercel.app",
+    origin: process.env.CLIENT_URL,
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   })
 );
