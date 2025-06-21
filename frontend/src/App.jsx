@@ -1,5 +1,4 @@
 import { useDispatch } from "react-redux";
-import "./app.css";
 import { Toaster } from "react-hot-toast";
 import { getUserProfileThunk } from "./store/slice/user/userThunk";
 import { useEffect } from "react";
