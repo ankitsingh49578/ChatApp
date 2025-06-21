@@ -12,7 +12,7 @@ connectDB()
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://lets-chat-pied.vercel.app",
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   })
 );
