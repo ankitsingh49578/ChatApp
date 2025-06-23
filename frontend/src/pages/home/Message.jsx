@@ -12,6 +12,15 @@ const Message = ({ messageDetails }) => {
       messageRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messageDetails]);
+
+  const isSender = userProfile?._id === messageDetails?.senderId;
+  const sender = isSender ? userProfile : selectedUser;
+
+  const messageAvatar =
+    sender?.imageUrl === ""
+      ? sender?.username?.slice(0, 2).toUpperCase()
+      : sender?.imageUrl;
+
   return (
     <div>
       <div
@@ -22,16 +31,13 @@ const Message = ({ messageDetails }) => {
             : "chat-start"
         }`}
       >
-        <div className="chat-image avatar">
-          <div className="w-10 rounded-full">
-            <img
-              alt="avatar"
-              src={
-                userProfile?._id === messageDetails?.senderId
-                  ? userProfile?.avatar
-                  : selectedUser?.avatar
-              }
-            />
+        <div className="chat-image avatar avatar-placeholder">
+          <div className="bg-neutral text-neutral-content w-10 rounded-full">
+            {messageAvatar.length === 2 ? (
+              <span className="text-center">{messageAvatar}</span>
+            ) : (
+              <img src={messageAvatar} alt="" />
+            )}
           </div>
         </div>
         <div className="chat-header">

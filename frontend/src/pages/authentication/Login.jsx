@@ -7,8 +7,8 @@ import { loginUserThunk } from "../../store/slice/user/userThunk.js";
 
 function Login() {
   const [loginData, setLoginData] = useState({
-    username: "",
-    password: "",
+    username: "test",
+    password: "123",
   });
 
   const dispatch = useDispatch();
@@ -16,11 +16,10 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(isAuthenticated){
+    if (isAuthenticated) {
       navigate("/");
     }
-  }, [isAuthenticated])
-  
+  }, [isAuthenticated]);
 
   const handleChange = (e) => {
     setLoginData({
@@ -102,7 +101,9 @@ function Login() {
         </p> */}
         {/* button */}
         {buttonLoading ? (
-          <button className="w-full btn btn-primary">Logging in...</button>
+          <button className="w-full btn btn-primary">
+            <span className="loading loading-bars loading-xs"></span>
+          </button>
         ) : (
           <>
             <button onClick={handleLogin} className="w-full btn btn-primary">

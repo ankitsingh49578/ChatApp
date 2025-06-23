@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUserThunk } from "../../store/slice/user/userThunk";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 function Signup() {
   const [signupData, setSignupData] = useState({
@@ -13,7 +14,7 @@ function Signup() {
     username: "",
     password: "",
     confirmPassword: "",
-    gender: "male",
+    imageUrl: "",
   });
 
   const dispatch = useDispatch();
@@ -21,7 +22,6 @@ function Signup() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(isAuthenticated)
     if (isAuthenticated) navigate("/");
   }, [isAuthenticated]);
 
@@ -30,6 +30,7 @@ function Signup() {
   };
 
   const handleSubmit = async () => {
+    console.log(signupData);
     if (signupData.password !== signupData.confirmPassword) {
       return toast.error("password and confirm password do not match!");
     }
@@ -40,9 +41,30 @@ function Signup() {
       navigate("/");
     }
   };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET_NAME);
+    // data.append("cloud_name", import.meta.env.VITE_CLOUD_NAME);
+
+    // upload image to cloudinary
+    try {
+      const res = await axios.post(
+        import.meta.env.VITE_CLOUDINARY_BASE_URL,
+        data
+      );
+      setSignupData({ ...signupData, imageUrl: res?.data?.url });
+    } catch (error) {
+      console.log(error);
+      console.error("Upload Error:", error.response?.data || error.message);
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center p-6 min-h-screen">
-      <div className="max-w-[30rem] w-full flex flex-col justify-center items-center gap-5 p-12 rounded-lg bg-base-200">
+      <div className="max-w-[30rem] w-full flex flex-col justify-center items-center gap-5 px-12 py-7 rounded-lg bg-base-200">
         <h2 className="text-4xl font-semibold">Sign Up</h2>
         {/* Full name */}
         <label className="input validator w-full">
@@ -60,11 +82,6 @@ function Signup() {
             // title="Only letters, numbers or dash"
           />
         </label>
-        <p className="mr-auto hidden">
-          Must be 3 to 30 characters
-          <br />
-          containing only letters, numbers or dash
-        </p>
 
         {/* username */}
         <label className="input validator w-full">
@@ -89,7 +106,7 @@ function Signup() {
         </p>
 
         {/* gender */}
-        <div className="input validator w-full gap-4">
+        {/* <div className="input validator w-full gap-4">
           <label htmlFor="radio-4" className="flex gap-3 cursor-pointer">
             <input
               id="male"
@@ -113,6 +130,18 @@ function Signup() {
             />
             Female
           </label>
+        </div> */}
+
+        {/* profile photo */}
+        <div className="w-full">
+          <label className="block text-gray-500 mb-1">
+            Upload Profile Photo
+          </label>
+          <input
+            onChange={handleFileUpload}
+            type="file"
+            className="file-input w-full"
+          />
         </div>
 
         {/* password */}
@@ -163,7 +192,9 @@ function Signup() {
 
         {/* button */}
         {buttonLoading ? (
-          <button className="w-full btn btn-primary">Signing in...</button>
+          <button className="w-full btn btn-primary">
+            <span className="loading loading-bars loading-xs"></span>
+          </button>
         ) : (
           <>
             <button onClick={handleSubmit} className="w-full btn btn-primary">

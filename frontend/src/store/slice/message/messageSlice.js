@@ -4,7 +4,7 @@ import { getMessageThunk, sendMessageThunk } from "./messageThunk.js";
 const initialState = {
   buttonLoading: false,
   screenLoading: false,
-  messages: null,
+  messages: [],
 };
 
 export const messageSlice = createSlice({
@@ -23,7 +23,7 @@ export const messageSlice = createSlice({
     });
     builder.addCase(sendMessageThunk.fulfilled, (state, action) => {
       state.messages = [...state.messages, action.payload?.responseData];
-      state.buttonLoading = true;
+      state.buttonLoading = false;
     });
     builder.addCase(sendMessageThunk.rejected, (state, action) => {
       state.buttonLoading = false;
@@ -34,7 +34,9 @@ export const messageSlice = createSlice({
       state.buttonLoading = true;
     });
     builder.addCase(getMessageThunk.fulfilled, (state, action) => {
-      state.messages = action.payload?.responseData?.messages;
+      state.messages = Array.isArray(action.payload?.responseData?.messages)
+        ? action.payload.responseData.messages
+        : [];
     });
     builder.addCase(getMessageThunk.rejected, (state, action) => {
       state.buttonLoading = false;

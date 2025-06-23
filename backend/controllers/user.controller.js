@@ -6,8 +6,8 @@ import jwt from "jsonwebtoken";
 
 // Register route
 const register = asyncHandler(async (req, res, next) => {
-  const { fullName, username, password, gender } = req.body;
-  if (!fullName || !username || !password || !gender) {
+  const { fullName, username, password, imageUrl } = req.body;
+  if (!fullName || !username || !password) {
     return next(new errorHandler("Please fill all the fields", 400));
   }
   const user = await User.findOne({ username });
@@ -18,14 +18,14 @@ const register = asyncHandler(async (req, res, next) => {
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const avatarType = gender === "male" ? "boy" : "girl";
-  const avatar = `https://avatar.iran.liara.run/public/${avatarType}?username=${username}`;
+  // const avatarType = gender === "male" ? "boy" : "girl";
+  // const avatar = `https://avatar.iran.liara.run/public/${avatarType}?username=${username}`;
+
   const newUser = await User.create({
     fullName,
     username,
     password: hashedPassword,
-    gender,
-    avatar,
+    imageUrl,
   });
 
   const tokenData = {
@@ -118,6 +118,34 @@ const getProfile = asyncHandler(async (req, res, next) => {
   });
 });
 
+// Edit user profile
+const editProfile = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id; // Assuming user ID is set in req.user by auth middleware
+  if (!userId) {
+    return next(new errorHandler("User not authenticated", 401));
+  }
+  const userProfile = await User.findByIdAndUpdate(userId);
+  if (!userProfile) {
+    return next(new errorHandler("User profile not found", 404));
+  }
+  const { fullName, username, imageUrl } = req.body;
+  if (!fullName ||!username) {
+    return next(new errorHandler("Please fill all the fields", 400));
+  }
+  const updatedProfile = await User.findByIdAndUpdate(
+    userId,
+    { fullName, username, imageUrl },
+    { new: true }
+  );
+  res.status(200).json({
+    success: true,
+    message: "User profile edited successfully",
+    responseData: {
+      updatedProfile,
+    },
+  });
+});
+
 // Logout route
 const logout = asyncHandler(async (req, res, next) => {
   res
@@ -145,4 +173,4 @@ const getOtherUsers = asyncHandler(async (req, res, next) => {
   });
 });
 
-export { login, register, getProfile, logout, getOtherUsers };
+export { login, register, getProfile, logout, getOtherUsers, editProfile };

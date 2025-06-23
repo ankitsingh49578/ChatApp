@@ -24,8 +24,14 @@ const User = ({ userDetails }) => {
           isUserOnline ? "avatar-online" : ""
         }`}
       >
-        <div className="bg-neutral text-neutral-content w-11 rounded-full">
-          <img src={userDetails?.avatar} alt="" />
+        <div className="avatar avatar-placeholder">
+          <div className="bg-neutral text-neutral-content w-10 rounded-full">
+              {userDetails?.imageUrl !== "" ? (
+                <img src={userDetails?.imageUrl} alt="" />
+              ) : (
+                <span>{userDetails?.username.slice(0, 2).toUpperCase()}</span>
+              )}
+          </div>
         </div>
       </div>
       <div className="">

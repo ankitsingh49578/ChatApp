@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { CiGlass, CiSearch } from "react-icons/ci";
+import { CiSearch } from "react-icons/ci";
 import User from "./User";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getOtherUsersThunk,
-  logoutUserThunk,
-} from "../../store/slice/user/userThunk";
-import { useNavigate } from "react-router-dom";
+import { getOtherUsersThunk } from "../../store/slice/user/userThunk";
+import EditProfile from "./EditProfile";
 
 const UserSidebar = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -15,16 +12,8 @@ const UserSidebar = () => {
   const { userProfile, buttonLoading, otherUsers } = useSelector(
     (state) => state.user
   );
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogout = async () => {
-    console.log("logout");
-    const response = await dispatch(logoutUserThunk());
-    if (response?.payload?.success) {
-      navigate("/login");
-    }
-  };
   useEffect(() => {
     if (!searchValue) {
       setUsers(otherUsers);
@@ -74,31 +63,21 @@ const UserSidebar = () => {
       </div>
 
       {/* footer */}
-      <div className="h-[3rem] flex items-center justify-between p-3">
-        <div className="flex items-center gap-2">
+      <div className="h-[3rem] flex items-center justify-between px-3 py-8 border-t border-white/10">
+        <div className="flex items-center gap-2 cursor-pointer">
           <div className="avatar avatar-online avatar-placeholder">
             <div className="bg-neutral text-neutral-content w-10 rounded-full">
-              {/* <span className="text-xl">AI</span> */}
-              <img src={userProfile?.avatar} alt="" />
+              {userProfile?.imageUrl !== "" ? (
+                <img src={userProfile?.imageUrl} alt="" />
+              ) : (
+                <span>{userProfile?.username.slice(0, 2).toUpperCase()}</span>
+              )}
             </div>
           </div>
           <p className="text-md">{userProfile?.username}</p>
         </div>
 
-        {buttonLoading ? (
-          <button className="btn btn-primary btn-sm px-4">
-            Logging out...
-          </button>
-        ) : (
-          <>
-            <button
-              onClick={handleLogout}
-              className="btn btn-primary btn-sm px-4"
-            >
-              Logout
-            </button>
-          </>
-        )}
+        <EditProfile buttonLoading={buttonLoading} />
       </div>
     </div>
   );

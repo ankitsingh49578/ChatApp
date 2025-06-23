@@ -9,10 +9,12 @@ const SendMessage = () => {
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
-    if(!message)return;
-    const res = await dispatch(sendMessageThunk({receiverId: selectedUser?._id, message}));
-    if(res?.payload?.success){
-        setMessage("");
+    if (!message) return;
+    const res = await dispatch(
+      sendMessageThunk({ receiverId: selectedUser?._id, message })
+    );
+    if (res?.payload?.success) {
+      setMessage("");
     }
   };
   return (
@@ -23,6 +25,9 @@ const SendMessage = () => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && message) handleSubmit();
+          }}
           placeholder="Enter your message..."
           className="input w-full"
         />

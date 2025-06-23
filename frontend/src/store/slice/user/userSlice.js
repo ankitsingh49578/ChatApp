@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  editUserProfileThunk,
   getOtherUsersThunk,
   getUserProfileThunk,
   loginUserThunk,
@@ -14,6 +15,7 @@ const initialState = {
   otherUsers: null,
   selectedUser: JSON.parse(localStorage.getItem("selectedUser")),
   buttonLoading: false,
+  saveButtonLoading: false,
 };
 
 export const userSlice = createSlice({
@@ -79,6 +81,20 @@ export const userSlice = createSlice({
     });
     builder.addCase(getUserProfileThunk.rejected, (state, action) => {
       state.screenLoading = false;
+    });
+
+    // edit user profile
+    builder.addCase(editUserProfileThunk.pending, (state, action) => {
+      state.saveButtonLoading = true;
+    });
+    builder.addCase(editUserProfileThunk.fulfilled, (state, action) => {
+      console.log("slice", action.payload);
+      state.userProfile = action.payload?.responseData?.updatedProfile;
+      state.isAuthenticated = true;
+      state.saveButtonLoading = false;
+    });
+    builder.addCase(editUserProfileThunk.rejected, (state, action) => {
+      state.saveButtonLoading = false;
     });
 
     // get other users

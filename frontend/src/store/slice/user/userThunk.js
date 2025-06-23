@@ -5,13 +5,13 @@ import { axiosInstance } from "../../../components/utilities/axiosInstance.js";
 // register
 export const registerUserThunk = createAsyncThunk(
   "users/signup",
-  async ({ fullName, username, password, gender }, { rejectWithValue }) => {
+  async ({ fullName, username, password, imageUrl }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/user/register", {
         fullName,
         username,
         password,
-        gender,
+        imageUrl,
       });
       // console.log(response);
       toast.success("Registration Successful!");
@@ -73,7 +73,27 @@ export const getUserProfileThunk = createAsyncThunk(
     } catch (error) {
       console.error(error);
       const errorOutput = error?.response?.data?.errMessage;
-      // toast.error(errorOutput);
+      return rejectWithValue(errorOutput);
+    }
+  }
+);
+
+// edit user profile
+export const editUserProfileThunk = createAsyncThunk(
+  "users/editProfile",
+  async ({ fullName, username, imageUrl }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put("/user/profile/edit-profile", {
+        fullName,
+        username,
+        imageUrl,
+      });
+      // console.log(response);
+      toast.success("Profile updated successfully!");
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      const errorOutput = error?.response?.data?.errMessage;
       return rejectWithValue(errorOutput);
     }
   }
